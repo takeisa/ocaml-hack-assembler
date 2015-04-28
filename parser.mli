@@ -1,6 +1,6 @@
 type t
 
-val create: string -> unit
+val create: string -> t
 
-val has_more_commands: t -> bool
+val next_command: t -> Hack_command.t option
   

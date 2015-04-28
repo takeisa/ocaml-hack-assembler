@@ -93,6 +93,7 @@ USE_OCAMLFIND = true
 #
 OCAMLPACKS[] =
 	core
+	re2
 #    pack1
 #    pack2
 #
@@ -149,7 +150,8 @@ OCAMLFLAGS    += -thread
 #
 
 FILES[] =
-	command
+	c_op
+	hack_command
 	parser
 	main
 #    file1

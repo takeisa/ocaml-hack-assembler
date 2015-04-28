@@ -1,8 +1,15 @@
 open Core.Std
 
 let assemble file_name =
-  In_channel.with_file file_name ~binary:true ~f:(fun ic ->
-      ())
+  let parser = Parser.create file_name in
+  let command = Parser.next_command parser in
+  match command with
+  | Some command -> (printf "Command"; ())
+  | None -> (printf "None\n"; ())                 
+
+(* In_channel.with_file file_name ~binary:true ~f:(fun ic -> *)
+  (*     let parser = Parser.create ic in *)
+  (*     ()) *)
 
 let spec =
   let open Command.Spec in
