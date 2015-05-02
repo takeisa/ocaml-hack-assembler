@@ -1,5 +1,8 @@
 	// comment line
-
-
-	hoge
+	  
 	
+	@0
+	0;JMP
+
+	
+

@@ -150,6 +150,7 @@ OCAMLFLAGS    += -thread
 #
 
 FILES[] =
+	a_op
 	c_op
 	hack_command
 	parser
