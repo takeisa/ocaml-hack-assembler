@@ -150,6 +150,7 @@ OCAMLFLAGS    += -thread
 #
 
 FILES[] =
+	symbol_table
 	a_op
 	c_op
 	hack_command

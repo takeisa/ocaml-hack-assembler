@@ -1,6 +1,6 @@
 open Core.Std
 
-let assemble file_name =
+let assemble_with_symbol symbol_table file_name =
   let parser = Parser.create file_name in
   let output_file_name = (Filename.chop_extension file_name) ^ ".hack" in
   Out_channel.with_file output_file_name ~f:(fun oc ->
@@ -16,6 +16,13 @@ let assemble file_name =
         | None -> () in
       assemble' ()
     )
+
+let create_symbol_table file_name =
+  Symbol_table.create ()
+
+let assemble file_name =
+  let symbol_table = create_symbol_table file_name in
+  assemble_with_symbol symbol_table file_name
 
 let spec =
   let open Command.Spec in
