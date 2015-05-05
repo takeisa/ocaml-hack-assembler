@@ -28,3 +28,4 @@ setup.log
 
 assembler
 assembler.opt
+*.hack
