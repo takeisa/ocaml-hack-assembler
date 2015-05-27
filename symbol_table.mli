@@ -8,4 +8,4 @@ val add: t -> string -> int -> t
 
 val find: t -> string -> int option
 
-val to_string: t -> unit
+val to_string: t -> string
