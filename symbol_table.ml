@@ -1,6 +1,6 @@
 open Core.Std
 
-type t = (string * int) list
+type t = (string * Address.t) list
 
 let create () = []
 
@@ -10,6 +10,20 @@ let add t symbol_name address =
 let find t symbol_name =
   List.Assoc.find t symbol_name
 
+let exists t symbol_name =
+  List.Assoc.mem t symbol_name
+
+let defined_symbol_exists t symbol_name =
+  match find t symbol_name with
+  | Some address -> begin
+      match address with
+      | Address.Undefined -> false
+      | Address.Address address -> true
+    end
+  | None -> false
+
+let to_array t = t
+
 let to_string t =
   List.to_string t ~f:(fun (symbol_name, address) ->
-      Printf.sprintf "%s: %4x" symbol_name address)
+      Printf.sprintf "%s: %s" symbol_name (Address.to_string address))

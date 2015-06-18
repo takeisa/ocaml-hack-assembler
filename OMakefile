@@ -150,6 +150,7 @@ OCAMLFLAGS    += -thread
 #
 
 FILES[] =
+	address
 	symbol_table
 	a_op
 	c_op

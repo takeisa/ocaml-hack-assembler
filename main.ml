@@ -24,21 +24,31 @@ let create_symbol_table file_name =
     List.fold reserved_symbols
       ~init:(Symbol_table.create ())
       ~f:(fun table (symbol_name, address) ->
-          Symbol_table.add table symbol_name address) in
+          Symbol_table.add table symbol_name (Address.Address address)) in
   let parser = Parser.create file_name in
   let rec assemble' table address =
     let command = Parser.next_command parser in
     match command with
-    | Some command' -> begin
-        match command' with
+    | Some command -> begin
+        match command with
         | Hack_command.A_OP a_op -> begin
             match a_op with
             | A_op.Symbol symbol_name -> begin
                 assemble'
-                  (Symbol_table.add table symbol_name address)
+                  (if Symbol_table.exists table symbol_name
+                   then table
+                   else (Symbol_table.add table symbol_name Address.Undefined))
                   (address + 1)
               end
             | A_op.Number _ -> assemble' table (address + 1)
+          end
+        | Hack_command.Label symbol_name -> begin
+            if Symbol_table.defined_symbol_exists table symbol_name
+            then failwith (sprintf "Duplicate symbol: %s" symbol_name)
+            else
+              assemble'
+                (Symbol_table.add table symbol_name (Address.Address address))
+                (address + 1)
           end
         | _ -> assemble' table (address + 1)
       end
@@ -62,9 +72,15 @@ let assemble_with_symbol symbol_table file_name =
       assemble' ()
     )
 
+let print_symbol_table table =
+  print_endline "=== Symbol table ===";
+  List.iter (List.rev (Symbol_table.to_array table)) ~f:(fun (name, address) ->
+      printf "%10s %s\n" name (Address.to_string address))
+
 let assemble file_name =
   let symbol_table = create_symbol_table file_name in
-  printf "symbol_table=%s\n" (Symbol_table.to_string symbol_table);
+  (* printf "symbol_table=%s\n" (Symbol_table.to_string symbol_table); *)
+  print_symbol_table symbol_table;
   assemble_with_symbol symbol_table file_name
 
 let spec =
