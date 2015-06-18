@@ -30,7 +30,7 @@ let parse_label line =
   Ok (Hack_command.Label symbol_name)
 
 let parse_a_op_address address =
-  let number_re = Regex.create_exn "$\\d+^" in
+  let number_re = Regex.create_exn "^\\d+$" in
   let is_number = Regex.matches number_re address in
   if is_number then
     Ok (A_op.Number (Int.of_string address))
