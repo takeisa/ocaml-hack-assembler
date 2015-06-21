@@ -73,10 +73,10 @@ let parse_c_op line =
           match jump with
           | Error _ as error -> error
           | Ok jump' -> begin
-              printf "dest=%d comp=%d jump=%d\n"
-                (C_op.dest_to_code dest')
-                (C_op.comp_to_code comp')
-                (C_op.jump_to_code jump');
+              (* printf "dest=%d comp=%d jump=%d\n" *)
+              (*   (C_op.dest_to_code dest') *)
+              (*   (C_op.comp_to_code comp') *)
+              (*   (C_op.jump_to_code jump'); *)
               Ok (Hack_command.C_OP (C_op.create dest' comp' jump'))
             end
     end
@@ -108,10 +108,10 @@ let rec read_command_line t =
   match line with
   | Some line -> begin
       if is_ignore_line line then
-        (printf "ignore : %3d %2d [%s]\n" t.line_no (String.length line) line;
+        ((* printf "ignore : %3d %2d [%s]\n" t.line_no (String.length line) line; *)
          read_command_line t)
       else
-        (printf "command: %3d %2d [%s]\n" t.line_no (String.length line)line;
+        ((* printf "command: %3d %2d [%s]\n" t.line_no (String.length line) line; *)
          Some line)
     end
   | None -> None
