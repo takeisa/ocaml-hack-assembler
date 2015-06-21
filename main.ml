@@ -62,6 +62,7 @@ let assemble_with_symbol symbol_table file_name =
       let rec assemble' () =
         let command = Parser.next_command parser in
         match command with
+        | Some (Hack_command.Label _) -> assemble' ()
         | Some command' -> begin
             Out_channel.output_string oc
 	      (Hack_command.code_to_string (Hack_command.to_code command' symbol_table));
@@ -80,7 +81,7 @@ let print_symbol_table table =
 let var_start_address = 0x0010
 
 let update_var_address symbol_table =
-  let symbols = Symbol_table.to_list symbol_table in
+  let symbols = List.rev (Symbol_table.to_list symbol_table) in
   let (table, _) =
     List.fold symbols
       ~init:(Symbol_table.create (), var_start_address)
