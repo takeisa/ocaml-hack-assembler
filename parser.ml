@@ -21,15 +21,27 @@ let is_ignore_line line =
   let ignore_re = create_exn "^\\s*(?://.*)?$" in
   matches ignore_re line
 
+let parse_label line =
+  let open Regex in
+  let symbol_name = find_first_exn
+      ~sub:(`Index 1)
+      (create_exn "^\\s*\\(([^(]+)\\)\\s*(?://.*)?")
+      line in
+  Ok (Hack_command.Label symbol_name)
+
 let parse_a_op_address address =
-  try Ok (A_op.Number (Int.of_string address)) with
-  Failure _ -> Error "Not a number"
+  let number_re = Regex.create_exn "^\\d+$" in
+  let is_number = Regex.matches number_re address in
+  if is_number then
+    Ok (A_op.Number (Int.of_string address))
+  else
+    Ok (A_op.Symbol address)
 
 let parse_a_op line =
   let open Regex in
   let address = find_first
       ~sub:(`Index 1)
-      (create_exn "^\\s*@([^\\s]+)\\s*$")
+      (create_exn "^\\s*@([^\\s]+)\\s*(?://.*)?")
       line in
   match address with
   | Ok address2 -> begin
@@ -42,7 +54,7 @@ let parse_a_op line =
 
 let parse_c_op line =
   let open Regex in
-  let c_op_re = create_exn "^\\s*((\\w+)=)?([^=;\\s]+)(;(\\w+))?\\s*$" in
+  let c_op_re = create_exn "^\\s*((\\w+)=)?([^=;\\s]+)(;(\\w+))?\\s*(?://.*)?" in
   let matches = find_submatches c_op_re line in
   match matches with
   | Ok matches' -> begin
@@ -61,10 +73,10 @@ let parse_c_op line =
           match jump with
           | Error _ as error -> error
           | Ok jump' -> begin
-              printf "dest=%d comp=%d jump=%d\n"
-                (C_op.dest_to_code dest')
-                (C_op.comp_to_code comp')
-                (C_op.jump_to_code jump');
+              (* printf "dest=%d comp=%d jump=%d\n" *)
+              (*   (C_op.dest_to_code dest') *)
+              (*   (C_op.comp_to_code comp') *)
+              (*   (C_op.jump_to_code jump'); *)
               Ok (Hack_command.C_OP (C_op.create dest' comp' jump'))
             end
     end
@@ -72,12 +84,16 @@ let parse_c_op line =
 
 
 let parse_exn t line =
+  let is_label =
+    let label_re = Regex.create_exn "^\\s*\\([^(]+\\)\\s*" in
+    Regex.matches label_re line in
   let is_a_op =
-    let open Regex in
-    let a_op_re = create_exn "^\\s*@" in
-    matches a_op_re line in
+    let a_op_re = Regex.create_exn "^\\s*@" in
+    Regex.matches a_op_re line in
   let command =
-    if is_a_op then
+    if is_label then
+      parse_label line
+    else if is_a_op then
       parse_a_op line
     else
       parse_c_op line in
@@ -92,10 +108,10 @@ let rec read_command_line t =
   match line with
   | Some line -> begin
       if is_ignore_line line then
-        (printf "ignore : %3d %2d [%s]\n" t.line_no (String.length line) line;
+        ((* printf "ignore : %3d %2d [%s]\n" t.line_no (String.length line) line; *)
          read_command_line t)
       else
-        (printf "command: %3d %2d [%s]\n" t.line_no (String.length line)line;
+        ((* printf "command: %3d %2d [%s]\n" t.line_no (String.length line) line; *)
          Some line)
     end
   | None -> None

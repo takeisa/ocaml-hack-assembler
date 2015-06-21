@@ -3,14 +3,17 @@ open Core.Std
 type t =
     A_OP of A_op.t
   | C_OP of C_op.t
+  | Label of string
     
 let to_string t = match t with
   | A_OP _ -> "A_OP"
   | C_OP _ -> "C_OP"
+  | Label symbol_name -> Printf.sprintf "(%s)" symbol_name
 
-let to_code t = match t with
-  | A_OP op -> A_op.to_code op
+let to_code t symbol_table = match t with
+  | A_OP op -> A_op.to_code op symbol_table
   | C_OP op -> C_op.to_code op
+  | Label _ -> failwith "can't convert label to code"
 
 (* TODO refactoring *)
 let code_to_string code =
