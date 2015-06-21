@@ -1,5 +1,5 @@
 // sum from 1 to 100
-	@i // comment	
+	@i
 	M=1	// i=1
 	@sum
 	M=0	// sum=0
@@ -19,7 +19,7 @@
 	M=M+1	// i=i+1
 	@LOOP
 	0;JMP
-(END)	    // comment(TAB+space)
+(END)
 	@END
 	0;JMP
 
