@@ -12,6 +12,8 @@ val exists: t -> string -> bool
 
 val defined_symbol_exists: t -> string -> bool
 
-val to_array: t -> (string * Address.t) list
+val to_list: t -> (string * Address.t) list
+
+val of_list: (string * Address.t) list -> t
 
 val to_string: t -> string

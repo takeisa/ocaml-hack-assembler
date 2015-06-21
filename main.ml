@@ -74,14 +74,30 @@ let assemble_with_symbol symbol_table file_name =
 
 let print_symbol_table table =
   print_endline "=== Symbol table ===";
-  List.iter (List.rev (Symbol_table.to_array table)) ~f:(fun (name, address) ->
+  List.iter (List.rev (Symbol_table.to_list table)) ~f:(fun (name, address) ->
       printf "%10s %s\n" name (Address.to_string address))
+
+let var_start_address = 0x0010
+
+let update_var_address symbol_table =
+  let symbols = Symbol_table.to_list symbol_table in
+  let (table, _) =
+    List.fold symbols
+      ~init:(Symbol_table.create (), var_start_address)
+      ~f:(fun (table, address_num) (symbol_name, address) ->
+          match address with
+          | Address.Address _ -> (Symbol_table.add table symbol_name address, address_num)
+          | Address.Undefined ->
+            (Symbol_table.add table
+               symbol_name (Address.Address address_num), address_num + 1)) in
+  table
 
 let assemble file_name =
   let symbol_table = create_symbol_table file_name in
-  (* printf "symbol_table=%s\n" (Symbol_table.to_string symbol_table); *)
-  print_symbol_table symbol_table;
-  assemble_with_symbol symbol_table file_name
+  let symbol_table' = update_var_address symbol_table in
+  (* printf "symbol_table=%s\n" (Symbol_table.to_string symbol_table'); *)
+  print_symbol_table symbol_table';
+  assemble_with_symbol symbol_table' file_name
 
 let spec =
   let open Command.Spec in

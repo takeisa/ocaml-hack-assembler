@@ -22,7 +22,9 @@ let defined_symbol_exists t symbol_name =
     end
   | None -> false
 
-let to_array t = t
+let to_list t = t
+
+let of_list t = t
 
 let to_string t =
   List.to_string t ~f:(fun (symbol_name, address) ->
