@@ -9,7 +9,7 @@ let range i j =
 let reserved_symbols =
   let reserved_register_symbols =
     List.map (range 0 16)
-      ~f:(fun n -> ((Printf.sprintf "R%02d" n), n)) in
+      ~f:(fun n -> ((Printf.sprintf "R%d" n), n)) in
   [("SP",   0x0000);
    ("LCL",  0x0001);
    ("ARG",  0x0002);
@@ -48,7 +48,7 @@ let create_symbol_table file_name =
             else
               assemble'
                 (Symbol_table.add table symbol_name (Address.Address address))
-                (address + 1)
+                address
           end
         | _ -> assemble' table (address + 1)
       end
