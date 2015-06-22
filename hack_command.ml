@@ -27,5 +27,3 @@ let code_to_string code =
   let buffer = List.fold chars ~init:(Buffer.create bit_length) ~f:(fun buf c ->
       (Buffer.add_char buf c; buf)) in
   Buffer.contents buffer
-      
-    
